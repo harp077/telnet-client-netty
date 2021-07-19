@@ -29,17 +29,33 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Scanner;
+import javax.swing.JOptionPane;
+import org.apache.commons.validator.routines.InetAddressValidator;
 
 /**
  * Simplistic telnet client.
  */
 public final class TelnetClient {
 
+    private static InetAddressValidator ipv = InetAddressValidator.getInstance();
     static final boolean SSL = System.getProperty("ssl") != null;
-    static final String HOST = System.getProperty("host", "10.73.250.11");
+    static String HOST;//System.getProperty("host", "10.73.250.11");
     static final int PORT = 23;//Integer.parseInt(System.getProperty("port", SSL? "8992" : "8023"));
 
     public static void main(String[] args) throws Exception {
+        HOST = JOptionPane.showInputDialog(null, "Enter IP-address: ", "IP-address", JOptionPane.OK_CANCEL_OPTION);
+        /*int cancelint=JOptionPane.CANCEL_OPTION;
+        int okint=JOptionPane.OK_OPTION;
+        if (cancelint==JOptionPane.CANCEL_OPTION) return;*/
+        try {
+            if (!ipv.isValid(HOST)) {
+                JOptionPane.showMessageDialog(null, "Wrong IP-address !", "wrong IP", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        } catch (NullPointerException ne) {
+                JOptionPane.showMessageDialog(null, "Empty IP-address !", "wrong IP", JOptionPane.ERROR_MESSAGE);
+                return;            
+        }
         // Configure SSL.
         final SslContext sslCtx;
         if (SSL) {
